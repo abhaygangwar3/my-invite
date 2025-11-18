@@ -14,27 +14,24 @@ import Countdown from "react-countdown";
 import "./App.css";
 
 function App() {
+  const BASE_URL = import.meta.env.BASE_URL; // automatically /my-invite/ in production
   const weddingDate = new Date(config.weddingDate);
   const [ceremonyImages, setCeremonyImages] = useState({});
 
   useEffect(() => {
-    const loadImages = async () => {
-      const imagesObj = {};
+    const imagesObj = {};
 
-      for (const ceremony of config.ceremonies) {
-        // Automatically import all images in the folder
-        const images = import.meta.glob(
-          `./public${ceremony.imageFolder || "/images/" + ceremony.name.toLowerCase() + "/" }*`,
-          { eager: true, as: "url" }
-        );
-        imagesObj[ceremony.name] = Object.values(images);
-      }
+    for (const ceremony of config.ceremonies) {
+      // Map each image path to include BASE_URL
+      imagesObj[ceremony.name] = (ceremony.images || []).map(
+        (img) => `${BASE_URL}${img.replace(/^\/+/, "")}`
+      );
+    }
 
-      setCeremonyImages(imagesObj);
-    };
-
-    loadImages();
+    setCeremonyImages(imagesObj);
   }, []);
+
+  if (!config) return <div>Loading...</div>;
 
   return (
     <div className="container">
@@ -59,7 +56,7 @@ function App() {
           >
             {(ceremonyImages[ceremony.name] || []).map((img, i) => (
               <SwiperSlide key={i}>
-                <img src={img} alt={`${ceremony.name} ${i + 1}`} className="slide-img"/>
+                <img src={img} alt={`${ceremony.name} ${i + 1}`} className="slide-img" />
               </SwiperSlide>
             ))}
           </Swiper>
