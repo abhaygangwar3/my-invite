@@ -1,0 +1,36 @@
+{
+  "bride": "Garima Patel",
+  "groom": "Abhay Gangwar",
+  "weddingDate": "2026-02-20",
+  "ceremonies": [
+    {
+      "name": "Haldi",
+      "date": "2026-02-19",
+      "time": "02:00 PM",
+      "venue": "Hotel Hyatt Centric, Dehradun",
+      "imageFolder": "/images/haldi/"
+    },
+    {
+      "name": "Sangeet",
+      "date": "2026-02-19",
+      "time": "06:00 PM",
+      "venue": "Hotel Hyatt Centric, Dehradun",
+      "imageFolder": "/images/sangeet/"
+    },
+    {
+      "name": "Mehendi",
+      "date": "2026-02-19",
+      "time": "09:00 PM",
+      "venue": "Hotel Hyatt Centric, Dehradun",
+      "imageFolder": "/images/mehendi/"
+    },
+    {
+      "name": "Wedding",
+      "date": "2026-02-20",
+      "time": "07:00 PM",
+      "venue": "Hotel Hyatt Centric, Dehradun",
+      "imageFolder": "/images/wedding/"
+    }
+  ],
+  "venueMap": "https://maps.app.goo.gl/cGX7aPDNE4sBD6oQA"
+}

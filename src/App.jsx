@@ -1,60 +1,79 @@
-import Hero from "./components/Hero";
-import CeremonySection from "./components/CeremonySection";
-import Venue from "./components/Venue";
-import Footer from "./components/Footer";
+import React, { useEffect, useState } from "react";
+import config from "./config.json";
 
-export default function App() {
+// Swiper imports (v10+)
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+
+// Swiper CSS
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
+import Countdown from "react-countdown";
+import "./App.css";
+
+function App() {
+  const weddingDate = new Date(config.weddingDate);
+  const [ceremonyImages, setCeremonyImages] = useState({});
+
+  useEffect(() => {
+    const loadImages = async () => {
+      const imagesObj = {};
+
+      for (const ceremony of config.ceremonies) {
+        // Automatically import all images in the folder
+        const images = import.meta.glob(
+          `./public${ceremony.imageFolder || "/images/" + ceremony.name.toLowerCase() + "/" }*`,
+          { eager: true, as: "url" }
+        );
+        imagesObj[ceremony.name] = Object.values(images);
+      }
+
+      setCeremonyImages(imagesObj);
+    };
+
+    loadImages();
+  }, []);
+
   return (
-    <div className="font-sans bg-[#FFFDF7] text-gray-800">
-      <Hero />
+    <div className="container">
+      <header className="header">
+        <h1>{config.bride} ❤️ {config.groom}</h1>
+        <h2>Wedding Date: {weddingDate.toDateString()}</h2>
+        <Countdown date={weddingDate} />
+      </header>
 
-      {/* Ceremony Sections */}
-      <CeremonySection
-        title="Haldi Ceremony"
-        date="12th December 2025"
-        time="10:00 AM"
-        images={[
-          "/images/haldi/1.jpg",
-          "/images/haldi/2.jpg",
-          "/images/haldi/3.jpg",
-        ]}
-      />
+      {config.ceremonies.map((ceremony, idx) => (
+        <section key={idx} className="ceremony">
+          <h3>{ceremony.name}</h3>
+          <p>{ceremony.date} at {ceremony.time}</p>
+          <p>Venue: {ceremony.venue}</p>
 
-      <CeremonySection
-        title="Sangeet Night"
-        date="13th December 2025"
-        time="7:00 PM"
-        images={[
-          "/images/sangeet/1.jpg",
-          "/images/sangeet/2.jpg",
-          "/images/sangeet/3.jpg",
-        ]}
-      />
+          <Swiper
+            modules={[Navigation, Pagination]}
+            navigation
+            pagination={{ clickable: true }}
+            spaceBetween={10}
+            slidesPerView={1}
+          >
+            {(ceremonyImages[ceremony.name] || []).map((img, i) => (
+              <SwiperSlide key={i}>
+                <img src={img} alt={`${ceremony.name} ${i + 1}`} className="slide-img"/>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </section>
+      ))}
 
-      <CeremonySection
-        title="Wedding"
-        date="14th December 2025"
-        time="5:00 PM"
-        images={[
-          "/images/wedding/1.jpg",
-          "/images/wedding/2.jpg",
-          "/images/wedding/3.jpg",
-        ]}
-      />
-
-      <CeremonySection
-        title="Reception"
-        date="15th December 2025"
-        time="8:00 PM"
-        images={[
-          "/images/reception/1.jpg",
-          "/images/reception/2.jpg",
-          "/images/reception/3.jpg",
-        ]}
-      />
-
-      <Venue />
-      <Footer />
+      <section className="venue-map">
+        <h3>Venue Map</h3>
+        <a href={config.venueMap} target="_blank" rel="noopener noreferrer">
+          Open Google Map
+        </a>
+      </section>
     </div>
   );
 }
+
+export default App;
